@@ -113,33 +113,33 @@ function Get-IconHTML {
         [string]$IconName
     )
     
-    # Return simple HTML symbols/emojis based on icon name
+    # Return simple HTML symbols/characters based on icon name
     switch ($IconName) {
-        'chart' { return '<span class="icon-emoji">📊</span>' }
-        'clipboard' { return '<span class="icon-emoji">📋</span>' }
-        'building' { return '<span class="icon-emoji">🏢</span>' }
-        'computer' { return '<span class="icon-emoji">💻</span>' }
-        'gear' { return '<span class="icon-emoji">⚙️</span>' }
-        'search' { return '<span class="icon-emoji">🔍</span>' }
-        'globe' { return '<span class="icon-emoji">🌐</span>' }
-        'folder' { return '<span class="icon-emoji">📁</span>' }
-        'users' { return '<span class="icon-emoji">👥</span>' }
-        'user' { return '<span class="icon-emoji">👤</span>' }
-        'database' { return '<span class="icon-emoji">🗄️</span>' }
-        'file' { return '<span class="icon-emoji">📄</span>' }
-        'lock' { return '<span class="icon-emoji">🔒</span>' }
-        'shield' { return '<span class="icon-emoji">🛡️</span>' }
-        'crown' { return '<span class="icon-emoji">👑</span>' }
-        'package' { return '<span class="icon-emoji">📦</span>' }
-        'plug' { return '<span class="icon-emoji">🔌</span>' }
-        'lightning' { return '<span class="icon-emoji">⚡</span>' }
-        'wrench' { return '<span class="icon-emoji">🔧</span>' }
-        'clock' { return '<span class="icon-emoji">🕐</span>' }
-        'hospital' { return '<span class="icon-emoji">🏥</span>' }
-        'refresh' { return '<span class="icon-emoji">🔄</span>' }
-        'target' { return '<span class="icon-emoji">🎯</span>' }
-        'folder2' { return '<span class="icon-emoji">📂</span>' }
-        default { return '<span class="icon-emoji">•</span>' }
+        'chart' { return '<span class="icon-emoji">&#128202;</span>' }
+        'clipboard' { return '<span class="icon-emoji">&#128203;</span>' }
+        'building' { return '<span class="icon-emoji">&#127970;</span>' }
+        'computer' { return '<span class="icon-emoji">&#128187;</span>' }
+        'gear' { return '<span class="icon-emoji">&#9881;</span>' }
+        'search' { return '<span class="icon-emoji">&#128269;</span>' }
+        'globe' { return '<span class="icon-emoji">&#127760;</span>' }
+        'folder' { return '<span class="icon-emoji">&#128193;</span>' }
+        'users' { return '<span class="icon-emoji">&#128101;</span>' }
+        'user' { return '<span class="icon-emoji">&#128100;</span>' }
+        'database' { return '<span class="icon-emoji">&#128451;</span>' }
+        'file' { return '<span class="icon-emoji">&#128196;</span>' }
+        'lock' { return '<span class="icon-emoji">&#128274;</span>' }
+        'shield' { return '<span class="icon-emoji">&#128737;</span>' }
+        'crown' { return '<span class="icon-emoji">&#128081;</span>' }
+        'package' { return '<span class="icon-emoji">&#128230;</span>' }
+        'plug' { return '<span class="icon-emoji">&#128268;</span>' }
+        'lightning' { return '<span class="icon-emoji">&#9889;</span>' }
+        'wrench' { return '<span class="icon-emoji">&#128295;</span>' }
+        'clock' { return '<span class="icon-emoji">&#128336;</span>' }
+        'hospital' { return '<span class="icon-emoji">&#127973;</span>' }
+        'refresh' { return '<span class="icon-emoji">&#128260;</span>' }
+        'target' { return '<span class="icon-emoji">&#127919;</span>' }
+        'folder2' { return '<span class="icon-emoji">&#128194;</span>' }
+        default { return '<span class="icon-emoji">&#8226;</span>' }
     }
 }
 
@@ -1115,8 +1115,6 @@ $sharePointInfo = Get-SharePointInformation -Path $path -ServerName $ServerName
 # Generate HTML Report
 Write-Host "Generating HTML Report..." -ForegroundColor Cyan
 
-# Debug: Check if icons folder exists
-$scriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { $PWD.Path }
 # Pre-generate all required icons
 Write-Host "Loading icons..." -ForegroundColor Yellow
 $iconChart = Get-IconHTML -IconName 'chart'
@@ -1995,7 +1993,7 @@ $fullHtml = @"
                     
                     <div id="SPSolutions" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'package') SharePoint Solutions</h3>
+                            <h3>$iconPackage SharePoint Solutions</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPSolutions'])
