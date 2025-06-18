@@ -102,6 +102,38 @@ function Get-TLSRegistryValue {
     }
 }
 
+function Get-IconSVG {
+    <#
+    .SYNOPSIS
+        Helper function to get SVG icon content from icon files
+    .PARAMETER IconName
+        Name of the icon file (without .svg extension)
+    .PARAMETER ScriptPath
+        Path to the script directory containing the icons folder
+    #>
+    param(
+        [string]$IconName,
+        [string]$ScriptPath = $PSScriptRoot
+    )
+    
+    try {
+        $iconPath = Join-Path -Path $ScriptPath -ChildPath "icons\$IconName.svg"
+        if (Test-Path $iconPath) {
+            $svgContent = Get-Content -Path $iconPath -Raw
+            # Remove XML declaration and make it inline-friendly
+            $svgContent = $svgContent -replace '<?xml.*?>', ''
+            $svgContent = $svgContent -replace '\r?\n', ''
+            return $svgContent.Trim()
+        } else {
+            # Fallback to a simple circle if icon not found
+            return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="4" fill="currentColor"/></svg>'
+        }
+    } catch {
+        # Fallback icon
+        return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="4" fill="currentColor"/></svg>'
+    }
+}
+
 # ----------------------------
 # SHAREPOINT INFORMATION FUNCTION
 # ----------------------------
@@ -1074,22 +1106,82 @@ $sharePointInfo = Get-SharePointInformation -Path $path -ServerName $ServerName
 # Generate HTML Report
 Write-Host "Generating HTML Report..." -ForegroundColor Cyan
 
+# Pre-generate all required icons
+$iconChart = Get-IconSVG -IconName 'chart'
+$iconClipboard = Get-IconSVG -IconName 'clipboard'
+$iconBuilding = Get-IconSVG -IconName 'building'
+$iconComputer = Get-IconSVG -IconName 'computer'
+$iconGear = Get-IconSVG -IconName 'gear'
+$iconSearch = Get-IconSVG -IconName 'search'
+$iconGlobe = Get-IconSVG -IconName 'globe'
+$iconFolder = Get-IconSVG -IconName 'folder'
+$iconUsers = Get-IconSVG -IconName 'users'
+$iconUser = Get-IconSVG -IconName 'user'
+$iconDatabase = Get-IconSVG -IconName 'database'
+$iconFile = Get-IconSVG -IconName 'file'
+$iconLock = Get-IconSVG -IconName 'lock'
+$iconShield = Get-IconSVG -IconName 'shield'
+$iconCrown = Get-IconSVG -IconName 'crown'
+$iconPackage = Get-IconSVG -IconName 'package'
+$iconPlug = Get-IconSVG -IconName 'plug'
+$iconLightning = Get-IconSVG -IconName 'lightning'
+$iconWrench = Get-IconSVG -IconName 'wrench'
+$iconClock = Get-IconSVG -IconName 'clock'
+$iconHospital = Get-IconSVG -IconName 'hospital'
+$iconRefresh = Get-IconSVG -IconName 'refresh'
+$iconTarget = Get-IconSVG -IconName 'target'
+$iconFolder2 = Get-IconSVG -IconName 'folder2'
+
 $reportTitle = "SharePoint Health Check Report"
-$reportScope = "Complete SharePoint Assessment"
 
 $fullHtml = @"
 <!DOCTYPE html>
 <html>
 <head>
-    <title>$reportTitle for SharePoint Server</title>
-    <style>
+    <title>$reportTitle for SharePoint Server</title>    <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
-        body { 
+        /* Icon Styles */
+        svg {
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            color: currentColor;
+        }
+        
+        .nav-toggle svg {
+            margin-right: 10px;
+        }
+        
+        .nav-item svg, .nav-submenu-item svg {
+            margin-right: 10px;
+            width: 14px;
+            height: 14px;
+        }
+        
+        .section-header svg, .subsection-header svg {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+        
+        h2 svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        h3 svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        body {
             font-family: 'Segoe UI', sans-serif; 
             background-color: #f8f9fa; 
             line-height: 1.6;
@@ -1558,132 +1650,126 @@ $fullHtml = @"
     </div>
     
     <div class="container">        <nav class="nav-menu">
-            <button class="nav-toggle">📊 Navigation Menu</button>
+            <button class="nav-toggle">$iconChart Navigation Menu</button>
             <div class="nav-items">
                 <div class="nav-item">
-                    <a href="#" data-section="summary">📋 Executive Summary</a>
-                </div>
-                <div class="nav-item has-submenu">
-                    <a href="#" data-section="farm-info">🏢 SharePoint Farm Information <span class="section-count">3</span></a>
+                    <a href="#" data-section="summary">$iconClipboard Executive Summary</a>
+                </div><div class="nav-item has-submenu">
+                    <a href="#" data-section="farm-info">$(Get-IconSVG -IconName 'building') SharePoint Farm Information <span class="section-count">3</span></a>
                     <div class="nav-submenu">
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="farm-info" data-subsection="SPServers">🖥️ SharePoint Servers</a>
+                            <a href="#" data-section="farm-info" data-subsection="SPServers">$(Get-IconSVG -IconName 'computer') SharePoint Servers</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="farm-info" data-subsection="CentralAdmin">⚙️ Central Administration</a>
+                            <a href="#" data-section="farm-info" data-subsection="CentralAdmin">$(Get-IconSVG -IconName 'gear') Central Administration</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="farm-info" data-subsection="DiagnosticConfig">🔍 Diagnostic Configuration</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="nav-item has-submenu">
-                    <a href="#" data-section="web-apps">🌐 Web Applications & Sites <span class="section-count">4</span></a>
-                    <div class="nav-submenu">
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="web-apps" data-subsection="WebApplications">🌐 Web Applications</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="web-apps" data-subsection="SiteCollections">📁 Site Collections</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="web-apps" data-subsection="SiteAdmins">👥 Site Collection Admins</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="web-apps" data-subsection="SiteUsers">👤 Site Users</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="nav-item has-submenu">
-                    <a href="#" data-section="databases">💾 Databases & Content <span class="section-count">3</span></a>
-                    <div class="nav-submenu">
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="databases" data-subsection="SPDatabases">🗄️ Content Databases</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="databases" data-subsection="SPContentTypes">📄 Content Types</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="databases" data-subsection="SPBackupHistory">💾 Backup History</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="nav-item has-submenu">
-                    <a href="#" data-section="security">🔒 Security Configuration <span class="section-count">4</span></a>
-                    <div class="nav-submenu">
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="security" data-subsection="SPSecurity">🔐 Security Configuration</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="security" data-subsection="SPFarmAdmins">👑 Farm Administrators</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="security" data-subsection="SPWebAppPolicies">📋 Web App Policies</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="security" data-subsection="TLSSettings">🔒 TLS Settings</a>
+                            <a href="#" data-section="farm-info" data-subsection="DiagnosticConfig">$(Get-IconSVG -IconName 'search') Diagnostic Configuration</a>
                         </div>
                     </div>
                 </div>                <div class="nav-item has-submenu">
-                    <a href="#" data-section="services">⚙️ Services & Solutions <span class="section-count">5</span></a>
+                    <a href="#" data-section="web-apps">$(Get-IconSVG -IconName 'globe') Web Applications & Sites <span class="section-count">4</span></a>
                     <div class="nav-submenu">
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="services" data-subsection="SPServiceAccounts">👤 Service Accounts</a>
+                            <a href="#" data-section="web-apps" data-subsection="WebApplications">$(Get-IconSVG -IconName 'globe') Web Applications</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="services" data-subsection="ServerServices">⚙️ Server Services</a>
+                            <a href="#" data-section="web-apps" data-subsection="SiteCollections">$(Get-IconSVG -IconName 'folder') Site Collections</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="services" data-subsection="SPSolutions">📦 SharePoint Solutions</a>
+                            <a href="#" data-section="web-apps" data-subsection="SiteAdmins">$(Get-IconSVG -IconName 'users') Site Collection Admins</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="services" data-subsection="SPFeatures">🔌 SharePoint Features</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="services" data-subsection="SPUserProfiles">👥 User Profiles</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="nav-item has-submenu">
-                    <a href="#" data-section="performance">⚡ Performance & Caching <span class="section-count">4</span></a>
-                    <div class="nav-submenu">
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="performance" data-subsection="SQLCounters">📊 SQL Performance Counters</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="performance" data-subsection="SPCacheSettings">⚡ Cache Settings</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="performance" data-subsection="SPBlobCache">💾 BLOB Cache</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="performance" data-subsection="SPSearchTopology">🔍 Search Topology</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="nav-item has-submenu">
-                    <a href="#" data-section="infrastructure">🔧 Infrastructure & Monitoring <span class="section-count">4</span></a>
-                    <div class="nav-submenu">
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="infrastructure" data-subsection="WebBindings">🌐 Web Bindings</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="infrastructure" data-subsection="SPIISSettings">🖥️ IIS Settings</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="infrastructure" data-subsection="SPTimerJobs">⏰ Timer Jobs</a>
-                        </div>
-                        <div class="nav-submenu-item">
-                            <a href="#" data-section="infrastructure" data-subsection="SPHealthAnalyzer">🏥 Health Analyzer</a>
+                            <a href="#" data-section="web-apps" data-subsection="SiteUsers">$(Get-IconSVG -IconName 'user') Site Users</a>
                         </div>
                     </div>
                 </div>                <div class="nav-item has-submenu">
-                    <a href="#" data-section="patch-mgmt">🔄 Patch Management <span class="section-count">2</span></a>
+                    <a href="#" data-section="databases">$(Get-IconSVG -IconName 'database') Databases & Content <span class="section-count">3</span></a>
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="databases" data-subsection="SPDatabases">$(Get-IconSVG -IconName 'database') Content Databases</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="databases" data-subsection="SPContentTypes">$(Get-IconSVG -IconName 'file') Content Types</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="databases" data-subsection="SPBackupHistory">$(Get-IconSVG -IconName 'database') Backup History</a>
+                        </div>
+                    </div>
+                </div>                <div class="nav-item has-submenu">
+                    <a href="#" data-section="security">$(Get-IconSVG -IconName 'lock') Security Configuration <span class="section-count">4</span></a>
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="security" data-subsection="SPSecurity">$(Get-IconSVG -IconName 'shield') Security Configuration</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="security" data-subsection="SPFarmAdmins">$(Get-IconSVG -IconName 'crown') Farm Administrators</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="security" data-subsection="SPWebAppPolicies">$(Get-IconSVG -IconName 'clipboard') Web App Policies</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="security" data-subsection="TLSSettings">$(Get-IconSVG -IconName 'lock') TLS Settings</a>
+                        </div>
+                    </div>
+                </div>                <div class="nav-item has-submenu">
+                    <a href="#" data-section="services">$(Get-IconSVG -IconName 'gear') Services & Solutions <span class="section-count">5</span></a>
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="services" data-subsection="SPServiceAccounts">$(Get-IconSVG -IconName 'user') Service Accounts</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="services" data-subsection="ServerServices">$(Get-IconSVG -IconName 'gear') Server Services</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="services" data-subsection="SPSolutions">$(Get-IconSVG -IconName 'package') SharePoint Solutions</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="services" data-subsection="SPFeatures">$(Get-IconSVG -IconName 'plug') SharePoint Features</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="services" data-subsection="SPUserProfiles">$(Get-IconSVG -IconName 'users') User Profiles</a>
+                        </div>
+                    </div>
+                </div>                <div class="nav-item has-submenu">
+                    <a href="#" data-section="performance">$(Get-IconSVG -IconName 'lightning') Performance & Caching <span class="section-count">4</span></a>
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="performance" data-subsection="SQLCounters">$(Get-IconSVG -IconName 'chart') SQL Performance Counters</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="performance" data-subsection="SPCacheSettings">$(Get-IconSVG -IconName 'lightning') Cache Settings</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="performance" data-subsection="SPBlobCache">$(Get-IconSVG -IconName 'database') BLOB Cache</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="performance" data-subsection="SPSearchTopology">$(Get-IconSVG -IconName 'search') Search Topology</a>
+                        </div>
+                    </div>
+                </div>                <div class="nav-item has-submenu">
+                    <a href="#" data-section="infrastructure">$(Get-IconSVG -IconName 'wrench') Infrastructure & Monitoring <span class="section-count">4</span></a>
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="infrastructure" data-subsection="WebBindings">$(Get-IconSVG -IconName 'globe') Web Bindings</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="infrastructure" data-subsection="SPIISSettings">$(Get-IconSVG -IconName 'computer') IIS Settings</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="infrastructure" data-subsection="SPTimerJobs">$(Get-IconSVG -IconName 'clock') Timer Jobs</a>
+                        </div>
+                        <div class="nav-submenu-item">
+                            <a href="#" data-section="infrastructure" data-subsection="SPHealthAnalyzer">$(Get-IconSVG -IconName 'hospital') Health Analyzer</a>
+                        </div>
+                    </div>
+                </div>                <div class="nav-item has-submenu">
+                    <a href="#" data-section="patch-mgmt">$(Get-IconSVG -IconName 'refresh') Patch Management <span class="section-count">2</span></a>
                     <div class="nav-submenu">                        <div class="nav-submenu-item">
-                            <a href="#" data-section="patch-mgmt" data-subsection="FarmVersion">🏢 Farm Version</a>
+                            <a href="#" data-section="patch-mgmt" data-subsection="FarmVersion">$(Get-IconSVG -IconName 'building') Farm Version</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="patch-mgmt" data-subsection="MissingUpdates">🔄 Missing Windows Updates</a>
+                            <a href="#" data-section="patch-mgmt" data-subsection="MissingUpdates">$(Get-IconSVG -IconName 'refresh') Missing Windows Updates</a>
                         </div>
                     </div>
                 </div>
@@ -1692,9 +1778,8 @@ $fullHtml = @"
         
         <main class="main-content">
             <!-- Executive Summary Section -->
-            <div id="summary" class="section">
-                <div class="summary-card">
-                    <h2 style="color: white; margin-bottom: 20px;">📊 SharePoint Environment Summary</h2>
+            <div id="summary" class="section">                <div class="summary-card">
+                    <h2 style="color: white; margin-bottom: 20px;">$(Get-IconSVG -IconName 'chart') SharePoint Environment Summary</h2>
                     <div class="summary-grid">                        <div class="summary-item">
                             <span class="summary-number">31</span>
                             <span class="summary-label">Assessment Categories</span>
@@ -1709,21 +1794,20 @@ $fullHtml = @"
                         </div>
                     </div>
                 </div>
-                
-                <div class="section-header">
-                    <h2>📋 Assessment Overview</h2>
+                  <div class="section-header">
+                    <h2>$(Get-IconSVG -IconName 'clipboard') Assessment Overview</h2>
                 </div>
                 <div class="section-content">
                     <p>This comprehensive SharePoint assessment report provides detailed analysis across 9 major categories covering 32 different assessment areas. The report includes both technical configuration details and security posture analysis.</p>
                     <br>
-                    <h3>📂 Report Components:</h3>
+                    <h3>$(Get-IconSVG -IconName 'folder2') Report Components:</h3>
                     <ul style="margin-left: 20px; margin-top: 10px;">
                         <li><strong>Interactive HTML Report:</strong> This comprehensive report with collapsible navigation</li>
                         <li><strong>CSV Data Files:</strong> 33 detailed CSV files for data analysis and integration</li>
                         <li><strong>Assessment Categories:</strong> Covering Farm, Web Apps, Security, Performance, and more</li>
                     </ul>
                     <br>
-                    <h3>🎯 Key Areas Assessed:</h3>
+                    <h3>$(Get-IconSVG -IconName 'target') Key Areas Assessed:</h3>
                     <ul style="margin-left: 20px; margin-top: 10px;">
                         <li>SharePoint Farm configuration and topology</li>
                         <li>Web applications and site collections</li>
@@ -1735,24 +1819,22 @@ $fullHtml = @"
                     </ul>
                 </div>
             </div>
-              <!-- SharePoint Farm Information Section -->
-            <div id="farm-info" class="section">
+              <!-- SharePoint Farm Information Section -->            <div id="farm-info" class="section">
                 <div class="section-header">
-                    <h2>🏢 SharePoint Farm Information</h2>
+                    <h2>$(Get-IconSVG -IconName 'building') SharePoint Farm Information</h2>
                 </div>
                 <div class="section-content">
                     <div id="SPServers" class="subsection">
                         <div class="subsection-header">
-                            <h3>🖥️ SharePoint Servers</h3>
+                            <h3>$(Get-IconSVG -IconName 'computer') SharePoint Servers</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPServers'])
                         </div>
                     </div>
-                    
-                    <div id="CentralAdmin" class="subsection">
+                      <div id="CentralAdmin" class="subsection">
                         <div class="subsection-header">
-                            <h3>⚙️ Central Administration</h3>
+                            <h3>$(Get-IconSVG -IconName 'gear') Central Administration</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['CentralAdmin'])
@@ -1761,7 +1843,7 @@ $fullHtml = @"
                     
                     <div id="DiagnosticConfig" class="subsection">
                         <div class="subsection-header">
-                            <h3>🔍 Diagnostic Configuration</h3>
+                            <h3>$(Get-IconSVG -IconName 'search') Diagnostic Configuration</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['DiagnosticConfig'])
@@ -1769,24 +1851,22 @@ $fullHtml = @"
                     </div>
                 </div>
             </div>
-              <!-- Web Applications & Sites Section -->
-            <div id="web-apps" class="section">
+              <!-- Web Applications & Sites Section -->            <div id="web-apps" class="section">
                 <div class="section-header">
-                    <h2>🌐 Web Applications & Sites</h2>
+                    <h2>$(Get-IconSVG -IconName 'globe') Web Applications & Sites</h2>
                 </div>
                 <div class="section-content">
                     <div id="WebApplications" class="subsection">
                         <div class="subsection-header">
-                            <h3>🌐 Web Applications</h3>
+                            <h3>$(Get-IconSVG -IconName 'globe') Web Applications</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['WebApplications'])
                         </div>
                     </div>
-                    
-                    <div id="SiteCollections" class="subsection">
+                      <div id="SiteCollections" class="subsection">
                         <div class="subsection-header">
-                            <h3>📁 Site Collections</h3>
+                            <h3>$(Get-IconSVG -IconName 'folder') Site Collections</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SiteCollections'])
@@ -1795,7 +1875,7 @@ $fullHtml = @"
                     
                     <div id="SiteAdmins" class="subsection">
                         <div class="subsection-header">
-                            <h3>👥 Site Collection Admins</h3>
+                            <h3>$(Get-IconSVG -IconName 'users') Site Collection Admins</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SiteAdmins'])
@@ -1804,7 +1884,7 @@ $fullHtml = @"
                     
                     <div id="SiteUsers" class="subsection">
                         <div class="subsection-header">
-                            <h3>👤 Site Users</h3>
+                            <h3>$(Get-IconSVG -IconName 'user') Site Users</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SiteUsers'])
@@ -1812,16 +1892,15 @@ $fullHtml = @"
                     </div>
                 </div>
             </div>
-            
-            <!-- Databases & Content Section -->
+              <!-- Databases & Content Section -->
             <div id="databases" class="section">
                 <div class="section-header">
-                    <h2>💾 Databases & Content</h2>
+                    <h2>$(Get-IconSVG -IconName 'database') Databases & Content</h2>
                 </div>
                 <div class="section-content">
                     <div id="SPDatabases" class="subsection">
                         <div class="subsection-header">
-                            <h3>🗄️ Content Databases</h3>
+                            <h3>$(Get-IconSVG -IconName 'database') Content Databases</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPDatabases'])
@@ -1830,7 +1909,7 @@ $fullHtml = @"
                     
                     <div id="SPContentTypes" class="subsection">
                         <div class="subsection-header">
-                            <h3>📄 Content Types</h3>
+                            <h3>$(Get-IconSVG -IconName 'file') Content Types</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPContentTypes'])
@@ -1839,7 +1918,7 @@ $fullHtml = @"
                     
                     <div id="SPBackupHistory" class="subsection">
                         <div class="subsection-header">
-                            <h3>💾 Backup History</h3>
+                            <h3>$(Get-IconSVG -IconName 'database') Backup History</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPBackupHistory'])
@@ -1847,16 +1926,15 @@ $fullHtml = @"
                     </div>
                 </div>
             </div>
-            
-            <!-- Security Configuration Section -->
+              <!-- Security Configuration Section -->
             <div id="security" class="section">
                 <div class="section-header">
-                    <h2>🔒 Security Configuration</h2>
+                    <h2>$(Get-IconSVG -IconName 'lock') Security Configuration</h2>
                 </div>
                 <div class="section-content">
                     <div id="SPSecurity" class="subsection">
                         <div class="subsection-header">
-                            <h3>🔐 Security Configuration</h3>
+                            <h3>$(Get-IconSVG -IconName 'shield') Security Configuration</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPSecurity'])
@@ -1865,7 +1943,7 @@ $fullHtml = @"
                     
                     <div id="SPFarmAdmins" class="subsection">
                         <div class="subsection-header">
-                            <h3>👑 Farm Administrators</h3>
+                            <h3>$(Get-IconSVG -IconName 'crown') Farm Administrators</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPFarmAdmins'])
@@ -1874,7 +1952,7 @@ $fullHtml = @"
                     
                     <div id="SPWebAppPolicies" class="subsection">
                         <div class="subsection-header">
-                            <h3>📋 Web App Policies</h3>
+                            <h3>$(Get-IconSVG -IconName 'clipboard') Web App Policies</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPWebAppPolicies'])
@@ -1883,22 +1961,21 @@ $fullHtml = @"
                     
                     <div id="TLSSettings" class="subsection">
                         <div class="subsection-header">
-                            <h3>🔒 TLS Settings</h3>
+                            <h3>$(Get-IconSVG -IconName 'lock') TLS Settings</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['TLSSettings'])
                         </div>
                     </div>
                 </div>
-            </div>
-              <!-- Services & Solutions Section -->
+            </div>              <!-- Services & Solutions Section -->
             <div id="services" class="section">
                 <div class="section-header">
-                    <h2>⚙️ Services & Solutions</h2>
+                    <h2>$(Get-IconSVG -IconName 'gear') Services & Solutions</h2>
                 </div>                <div class="section-content">
                     <div id="SPServiceAccounts" class="subsection">
                         <div class="subsection-header">
-                            <h3>👤 Service Accounts</h3>
+                            <h3>$(Get-IconSVG -IconName 'user') Service Accounts</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPServiceAccounts'])
@@ -1907,7 +1984,7 @@ $fullHtml = @"
                     
                     <div id="ServerServices" class="subsection">
                         <div class="subsection-header">
-                            <h3>⚙️ Server Services</h3>
+                            <h3>$(Get-IconSVG -IconName 'gear') Server Services</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['ServerServices'])
@@ -1916,7 +1993,7 @@ $fullHtml = @"
                     
                     <div id="SPSolutions" class="subsection">
                         <div class="subsection-header">
-                            <h3>📦 SharePoint Solutions</h3>
+                            <h3>$(Get-IconSVG -IconName 'package') SharePoint Solutions</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPSolutions'])
@@ -1925,7 +2002,7 @@ $fullHtml = @"
                     
                     <div id="SPFeatures" class="subsection">
                         <div class="subsection-header">
-                            <h3>🔌 SharePoint Features</h3>
+                            <h3>$(Get-IconSVG -IconName 'plug') SharePoint Features</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPFeatures'])
@@ -1934,7 +2011,7 @@ $fullHtml = @"
                     
                     <div id="SPUserProfiles" class="subsection">
                         <div class="subsection-header">
-                            <h3>👥 User Profiles</h3>
+                            <h3>$(Get-IconSVG -IconName 'users') User Profiles</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPUserProfiles'])
@@ -1942,16 +2019,15 @@ $fullHtml = @"
                     </div>
                 </div>
             </div>
-            
-            <!-- Performance & Caching Section -->
+              <!-- Performance & Caching Section -->
             <div id="performance" class="section">
                 <div class="section-header">
-                    <h2>⚡ Performance & Caching</h2>
+                    <h2>$(Get-IconSVG -IconName 'lightning') Performance & Caching</h2>
                 </div>
                 <div class="section-content">
                     <div id="SQLCounters" class="subsection">
                         <div class="subsection-header">
-                            <h3>📊 SQL Performance Counters</h3>
+                            <h3>$(Get-IconSVG -IconName 'chart') SQL Performance Counters</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SQLCounters'])
@@ -1960,7 +2036,7 @@ $fullHtml = @"
                     
                     <div id="SPCacheSettings" class="subsection">
                         <div class="subsection-header">
-                            <h3>⚡ Cache Settings</h3>
+                            <h3>$(Get-IconSVG -IconName 'lightning') Cache Settings</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPCacheSettings'])
@@ -1969,7 +2045,7 @@ $fullHtml = @"
                     
                     <div id="SPBlobCache" class="subsection">
                         <div class="subsection-header">
-                            <h3>💾 BLOB Cache</h3>
+                            <h3>$(Get-IconSVG -IconName 'database') BLOB Cache</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPBlobCache'])
@@ -1978,23 +2054,22 @@ $fullHtml = @"
                     
                     <div id="SPSearchTopology" class="subsection">
                         <div class="subsection-header">
-                            <h3>🔍 Search Topology</h3>
+                            <h3>$(Get-IconSVG -IconName 'search') Search Topology</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPSearchTopology'])
                         </div>
                     </div>
                 </div>
-            </div>
-              <!-- Infrastructure & Monitoring Section -->
+            </div>              <!-- Infrastructure & Monitoring Section -->
             <div id="infrastructure" class="section">
                 <div class="section-header">
-                    <h2>🔧 Infrastructure & Monitoring</h2>
+                    <h2>$(Get-IconSVG -IconName 'wrench') Infrastructure & Monitoring</h2>
                 </div>
                 <div class="section-content">
                     <div id="WebBindings" class="subsection">
                         <div class="subsection-header">
-                            <h3>🌐 Web Bindings</h3>
+                            <h3>$(Get-IconSVG -IconName 'globe') Web Bindings</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['WebBindings'])
@@ -2003,7 +2078,7 @@ $fullHtml = @"
                     
                     <div id="SPIISSettings" class="subsection">
                         <div class="subsection-header">
-                            <h3>🖥️ IIS Settings</h3>
+                            <h3>$(Get-IconSVG -IconName 'computer') IIS Settings</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPIISSettings'])
@@ -2012,7 +2087,7 @@ $fullHtml = @"
                     
                     <div id="SPTimerJobs" class="subsection">
                         <div class="subsection-header">
-                            <h3>⏰ Timer Jobs</h3>
+                            <h3>$(Get-IconSVG -IconName 'clock') Timer Jobs</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPTimerJobs'])
@@ -2021,22 +2096,21 @@ $fullHtml = @"
                     
                     <div id="SPHealthAnalyzer" class="subsection">
                         <div class="subsection-header">
-                            <h3>🏥 Health Analyzer</h3>
+                            <h3>$(Get-IconSVG -IconName 'hospital') Health Analyzer</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPHealthAnalyzer'])
                         </div>
                     </div>
                 </div>
-            </div>
-              <!-- Patch Management Section -->
+            </div>              <!-- Patch Management Section -->
             <div id="patch-mgmt" class="section">
                 <div class="section-header">
-                    <h2>🔄 Patch Management</h2>
+                    <h2>$(Get-IconSVG -IconName 'refresh') Patch Management</h2>
                 </div>
                 <div class="section-content">                    <div id="FarmVersion" class="subsection">
                         <div class="subsection-header">
-                            <h3>🏢 Farm Version</h3>
+                            <h3>$(Get-IconSVG -IconName 'building') Farm Version</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['FarmVersion'])
@@ -2045,7 +2119,7 @@ $fullHtml = @"
                     
                     <div id="MissingUpdates" class="subsection">
                         <div class="subsection-header">
-                            <h3>🔄 Missing Windows Updates</h3>
+                            <h3>$(Get-IconSVG -IconName 'refresh') Missing Windows Updates</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['MissingUpdates'])
