@@ -1251,9 +1251,8 @@ $fullHtml = @"
         .nav-toggle:hover {
             background: #3182ce;
         }
-        
-        .nav-toggle:after {
-            content: '◀';
+          .nav-toggle:after {
+            content: '\25C0';
             float: right;
             transition: transform 0.3s;
         }
@@ -1294,10 +1293,9 @@ $fullHtml = @"
             color: white;
             border-left: 4px solid #63b3ed;
         }
-        
-        /* Sub-section styles */
+          /* Sub-section styles */
         .nav-item.has-submenu > a:after {
-            content: '▶';
+            content: '\25B6';
             float: right;
             transition: transform 0.3s;
             font-size: 12px;
