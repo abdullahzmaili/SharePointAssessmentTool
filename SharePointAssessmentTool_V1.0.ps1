@@ -102,35 +102,44 @@ function Get-TLSRegistryValue {
     }
 }
 
-function Get-IconSVG {
+function Get-IconHTML {
     <#
     .SYNOPSIS
-        Helper function to get SVG icon content from icon files
+        Helper function to get HTML icon symbols
     .PARAMETER IconName
-        Name of the icon file (without .svg extension)
-    .PARAMETER ScriptPath
-        Path to the script directory containing the icons folder
+        Name of the icon
     #>
     param(
-        [string]$IconName,
-        [string]$ScriptPath = $PSScriptRoot
+        [string]$IconName
     )
     
-    try {
-        $iconPath = Join-Path -Path $ScriptPath -ChildPath "icons\$IconName.svg"
-        if (Test-Path $iconPath) {
-            $svgContent = Get-Content -Path $iconPath -Raw
-            # Remove XML declaration and make it inline-friendly
-            $svgContent = $svgContent -replace '<?xml.*?>', ''
-            $svgContent = $svgContent -replace '\r?\n', ''
-            return $svgContent.Trim()
-        } else {
-            # Fallback to a simple circle if icon not found
-            return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="4" fill="currentColor"/></svg>'
-        }
-    } catch {
-        # Fallback icon
-        return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="4" fill="currentColor"/></svg>'
+    # Return simple HTML symbols/emojis based on icon name
+    switch ($IconName) {
+        'chart' { return '<span class="icon-emoji">📊</span>' }
+        'clipboard' { return '<span class="icon-emoji">📋</span>' }
+        'building' { return '<span class="icon-emoji">🏢</span>' }
+        'computer' { return '<span class="icon-emoji">💻</span>' }
+        'gear' { return '<span class="icon-emoji">⚙️</span>' }
+        'search' { return '<span class="icon-emoji">🔍</span>' }
+        'globe' { return '<span class="icon-emoji">🌐</span>' }
+        'folder' { return '<span class="icon-emoji">📁</span>' }
+        'users' { return '<span class="icon-emoji">👥</span>' }
+        'user' { return '<span class="icon-emoji">👤</span>' }
+        'database' { return '<span class="icon-emoji">🗄️</span>' }
+        'file' { return '<span class="icon-emoji">📄</span>' }
+        'lock' { return '<span class="icon-emoji">🔒</span>' }
+        'shield' { return '<span class="icon-emoji">🛡️</span>' }
+        'crown' { return '<span class="icon-emoji">👑</span>' }
+        'package' { return '<span class="icon-emoji">📦</span>' }
+        'plug' { return '<span class="icon-emoji">🔌</span>' }
+        'lightning' { return '<span class="icon-emoji">⚡</span>' }
+        'wrench' { return '<span class="icon-emoji">🔧</span>' }
+        'clock' { return '<span class="icon-emoji">🕐</span>' }
+        'hospital' { return '<span class="icon-emoji">🏥</span>' }
+        'refresh' { return '<span class="icon-emoji">🔄</span>' }
+        'target' { return '<span class="icon-emoji">🎯</span>' }
+        'folder2' { return '<span class="icon-emoji">📂</span>' }
+        default { return '<span class="icon-emoji">•</span>' }
     }
 }
 
@@ -1106,31 +1115,35 @@ $sharePointInfo = Get-SharePointInformation -Path $path -ServerName $ServerName
 # Generate HTML Report
 Write-Host "Generating HTML Report..." -ForegroundColor Cyan
 
+# Debug: Check if icons folder exists
+$scriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { $PWD.Path }
 # Pre-generate all required icons
-$iconChart = Get-IconSVG -IconName 'chart'
-$iconClipboard = Get-IconSVG -IconName 'clipboard'
-$iconBuilding = Get-IconSVG -IconName 'building'
-$iconComputer = Get-IconSVG -IconName 'computer'
-$iconGear = Get-IconSVG -IconName 'gear'
-$iconSearch = Get-IconSVG -IconName 'search'
-$iconGlobe = Get-IconSVG -IconName 'globe'
-$iconFolder = Get-IconSVG -IconName 'folder'
-$iconUsers = Get-IconSVG -IconName 'users'
-$iconUser = Get-IconSVG -IconName 'user'
-$iconDatabase = Get-IconSVG -IconName 'database'
-$iconFile = Get-IconSVG -IconName 'file'
-$iconLock = Get-IconSVG -IconName 'lock'
-$iconShield = Get-IconSVG -IconName 'shield'
-$iconCrown = Get-IconSVG -IconName 'crown'
-$iconPackage = Get-IconSVG -IconName 'package'
-$iconPlug = Get-IconSVG -IconName 'plug'
-$iconLightning = Get-IconSVG -IconName 'lightning'
-$iconWrench = Get-IconSVG -IconName 'wrench'
-$iconClock = Get-IconSVG -IconName 'clock'
-$iconHospital = Get-IconSVG -IconName 'hospital'
-$iconRefresh = Get-IconSVG -IconName 'refresh'
-$iconTarget = Get-IconSVG -IconName 'target'
-$iconFolder2 = Get-IconSVG -IconName 'folder2'
+Write-Host "Loading icons..." -ForegroundColor Yellow
+$iconChart = Get-IconHTML -IconName 'chart'
+$iconClipboard = Get-IconHTML -IconName 'clipboard'
+$iconBuilding = Get-IconHTML -IconName 'building'
+$iconComputer = Get-IconHTML -IconName 'computer'
+$iconGear = Get-IconHTML -IconName 'gear'
+$iconSearch = Get-IconHTML -IconName 'search'
+$iconGlobe = Get-IconHTML -IconName 'globe'
+$iconFolder = Get-IconHTML -IconName 'folder'
+$iconUsers = Get-IconHTML -IconName 'users'
+$iconUser = Get-IconHTML -IconName 'user'
+$iconDatabase = Get-IconHTML -IconName 'database'
+$iconFile = Get-IconHTML -IconName 'file'
+$iconLock = Get-IconHTML -IconName 'lock'
+$iconShield = Get-IconHTML -IconName 'shield'
+$iconCrown = Get-IconHTML -IconName 'crown'
+$iconPackage = Get-IconHTML -IconName 'package'
+$iconPlug = Get-IconHTML -IconName 'plug'
+$iconLightning = Get-IconHTML -IconName 'lightning'
+$iconWrench = Get-IconHTML -IconName 'wrench'
+$iconClock = Get-IconHTML -IconName 'clock'
+$iconHospital = Get-IconHTML -IconName 'hospital'
+$iconRefresh = Get-IconHTML -IconName 'refresh'
+$iconTarget = Get-IconHTML -IconName 'target'
+$iconFolder2 = Get-IconHTML -IconName 'folder2'
+Write-Host "Icons loaded successfully" -ForegroundColor Green
 
 $reportTitle = "SharePoint Health Check Report"
 
@@ -1143,42 +1156,31 @@ $fullHtml = @"
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-        
+        }        
         /* Icon Styles */
-        svg {
+        .icon-emoji {
             display: inline-block;
             vertical-align: middle;
             margin-right: 8px;
-            width: 16px;
-            height: 16px;
-            color: currentColor;
+            font-size: 16px;
         }
         
-        .nav-toggle svg {
+        .nav-item .icon-emoji, .nav-submenu-item .icon-emoji {
             margin-right: 10px;
+            font-size: 14px;
         }
         
-        .nav-item svg, .nav-submenu-item svg {
+        .section-header .icon-emoji, .subsection-header .icon-emoji {
             margin-right: 10px;
-            width: 14px;
-            height: 14px;
+            font-size: 18px;
         }
         
-        .section-header svg, .subsection-header svg {
-            margin-right: 10px;
-            width: 18px;
-            height: 18px;
+        h2 .icon-emoji {
+            font-size: 20px;
         }
         
-        h2 svg {
-            width: 20px;
-            height: 20px;
-        }
-        
-        h3 svg {
-            width: 16px;
-            height: 16px;
+        h3 .icon-emoji {
+            font-size: 16px;
         }
         
         body {
@@ -1655,121 +1657,121 @@ $fullHtml = @"
                 <div class="nav-item">
                     <a href="#" data-section="summary">$iconClipboard Executive Summary</a>
                 </div><div class="nav-item has-submenu">
-                    <a href="#" data-section="farm-info">$(Get-IconSVG -IconName 'building') SharePoint Farm Information <span class="section-count">3</span></a>
+                    <a href="#" data-section="farm-info">$iconBuilding SharePoint Farm Information <span class="section-count">3</span></a>
                     <div class="nav-submenu">
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="farm-info" data-subsection="SPServers">$(Get-IconSVG -IconName 'computer') SharePoint Servers</a>
+                            <a href="#" data-section="farm-info" data-subsection="SPServers">$iconComputer SharePoint Servers</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="farm-info" data-subsection="CentralAdmin">$(Get-IconSVG -IconName 'gear') Central Administration</a>
+                            <a href="#" data-section="farm-info" data-subsection="CentralAdmin">$iconGear Central Administration</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="farm-info" data-subsection="DiagnosticConfig">$(Get-IconSVG -IconName 'search') Diagnostic Configuration</a>
+                            <a href="#" data-section="farm-info" data-subsection="DiagnosticConfig">$iconSearch Diagnostic Configuration</a>
                         </div>
                     </div>
                 </div>                <div class="nav-item has-submenu">
-                    <a href="#" data-section="web-apps">$(Get-IconSVG -IconName 'globe') Web Applications & Sites <span class="section-count">4</span></a>
+                    <a href="#" data-section="web-apps">$iconGlobe Web Applications & Sites <span class="section-count">4</span></a>
                     <div class="nav-submenu">
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="web-apps" data-subsection="WebApplications">$(Get-IconSVG -IconName 'globe') Web Applications</a>
+                            <a href="#" data-section="web-apps" data-subsection="WebApplications">$iconGlobe Web Applications</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="web-apps" data-subsection="SiteCollections">$(Get-IconSVG -IconName 'folder') Site Collections</a>
+                            <a href="#" data-section="web-apps" data-subsection="SiteCollections">$iconFolder Site Collections</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="web-apps" data-subsection="SiteAdmins">$(Get-IconSVG -IconName 'users') Site Collection Admins</a>
+                            <a href="#" data-section="web-apps" data-subsection="SiteAdmins">$iconUsers Site Collection Admins</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="web-apps" data-subsection="SiteUsers">$(Get-IconSVG -IconName 'user') Site Users</a>
+                            <a href="#" data-section="web-apps" data-subsection="SiteUsers">$iconUser Site Users</a>
                         </div>
                     </div>
                 </div>                <div class="nav-item has-submenu">
-                    <a href="#" data-section="databases">$(Get-IconSVG -IconName 'database') Databases & Content <span class="section-count">3</span></a>
+                    <a href="#" data-section="databases">$iconDatabase Databases & Content <span class="section-count">3</span></a>
                     <div class="nav-submenu">
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="databases" data-subsection="SPDatabases">$(Get-IconSVG -IconName 'database') Content Databases</a>
+                            <a href="#" data-section="databases" data-subsection="SPDatabases">$iconDatabase Content Databases</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="databases" data-subsection="SPContentTypes">$(Get-IconSVG -IconName 'file') Content Types</a>
+                            <a href="#" data-section="databases" data-subsection="SPContentTypes">$iconFile Content Types</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="databases" data-subsection="SPBackupHistory">$(Get-IconSVG -IconName 'database') Backup History</a>
+                            <a href="#" data-section="databases" data-subsection="SPBackupHistory">$iconDatabase Backup History</a>
                         </div>
                     </div>
                 </div>                <div class="nav-item has-submenu">
-                    <a href="#" data-section="security">$(Get-IconSVG -IconName 'lock') Security Configuration <span class="section-count">4</span></a>
+                    <a href="#" data-section="security">$iconLock Security Configuration <span class="section-count">4</span></a>
                     <div class="nav-submenu">
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="security" data-subsection="SPSecurity">$(Get-IconSVG -IconName 'shield') Security Configuration</a>
+                            <a href="#" data-section="security" data-subsection="SPSecurity">$iconShield Security Configuration</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="security" data-subsection="SPFarmAdmins">$(Get-IconSVG -IconName 'crown') Farm Administrators</a>
+                            <a href="#" data-section="security" data-subsection="SPFarmAdmins">$iconCrown Farm Administrators</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="security" data-subsection="SPWebAppPolicies">$(Get-IconSVG -IconName 'clipboard') Web App Policies</a>
+                            <a href="#" data-section="security" data-subsection="SPWebAppPolicies">$iconClipboard Web App Policies</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="security" data-subsection="TLSSettings">$(Get-IconSVG -IconName 'lock') TLS Settings</a>
+                            <a href="#" data-section="security" data-subsection="TLSSettings">$iconLock TLS Settings</a>
                         </div>
                     </div>
                 </div>                <div class="nav-item has-submenu">
-                    <a href="#" data-section="services">$(Get-IconSVG -IconName 'gear') Services & Solutions <span class="section-count">5</span></a>
+                    <a href="#" data-section="services">$iconGear Services & Solutions <span class="section-count">5</span></a>
                     <div class="nav-submenu">
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="services" data-subsection="SPServiceAccounts">$(Get-IconSVG -IconName 'user') Service Accounts</a>
+                            <a href="#" data-section="services" data-subsection="SPServiceAccounts">$iconUser Service Accounts</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="services" data-subsection="ServerServices">$(Get-IconSVG -IconName 'gear') Server Services</a>
+                            <a href="#" data-section="services" data-subsection="ServerServices">$iconGear Server Services</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="services" data-subsection="SPSolutions">$(Get-IconSVG -IconName 'package') SharePoint Solutions</a>
+                            <a href="#" data-section="services" data-subsection="SPSolutions">$iconPackage SharePoint Solutions</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="services" data-subsection="SPFeatures">$(Get-IconSVG -IconName 'plug') SharePoint Features</a>
+                            <a href="#" data-section="services" data-subsection="SPFeatures">$iconPlug SharePoint Features</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="services" data-subsection="SPUserProfiles">$(Get-IconSVG -IconName 'users') User Profiles</a>
+                            <a href="#" data-section="services" data-subsection="SPUserProfiles">$iconUsers User Profiles</a>
                         </div>
                     </div>
                 </div>                <div class="nav-item has-submenu">
-                    <a href="#" data-section="performance">$(Get-IconSVG -IconName 'lightning') Performance & Caching <span class="section-count">4</span></a>
+                    <a href="#" data-section="performance">$iconLightning Performance & Caching <span class="section-count">4</span></a>
                     <div class="nav-submenu">
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="performance" data-subsection="SQLCounters">$(Get-IconSVG -IconName 'chart') SQL Performance Counters</a>
+                            <a href="#" data-section="performance" data-subsection="SQLCounters">$iconChart SQL Performance Counters</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="performance" data-subsection="SPCacheSettings">$(Get-IconSVG -IconName 'lightning') Cache Settings</a>
+                            <a href="#" data-section="performance" data-subsection="SPCacheSettings">$iconLightning Cache Settings</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="performance" data-subsection="SPBlobCache">$(Get-IconSVG -IconName 'database') BLOB Cache</a>
+                            <a href="#" data-section="performance" data-subsection="SPBlobCache">$iconDatabase BLOB Cache</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="performance" data-subsection="SPSearchTopology">$(Get-IconSVG -IconName 'search') Search Topology</a>
+                            <a href="#" data-section="performance" data-subsection="SPSearchTopology">$iconSearch Search Topology</a>
                         </div>
                     </div>
                 </div>                <div class="nav-item has-submenu">
-                    <a href="#" data-section="infrastructure">$(Get-IconSVG -IconName 'wrench') Infrastructure & Monitoring <span class="section-count">4</span></a>
+                    <a href="#" data-section="infrastructure">$iconWrench Infrastructure & Monitoring <span class="section-count">4</span></a>
                     <div class="nav-submenu">
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="infrastructure" data-subsection="WebBindings">$(Get-IconSVG -IconName 'globe') Web Bindings</a>
+                            <a href="#" data-section="infrastructure" data-subsection="WebBindings">$iconGlobe Web Bindings</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="infrastructure" data-subsection="SPIISSettings">$(Get-IconSVG -IconName 'computer') IIS Settings</a>
+                            <a href="#" data-section="infrastructure" data-subsection="SPIISSettings">$iconComputer IIS Settings</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="infrastructure" data-subsection="SPTimerJobs">$(Get-IconSVG -IconName 'clock') Timer Jobs</a>
+                            <a href="#" data-section="infrastructure" data-subsection="SPTimerJobs">$iconClock Timer Jobs</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="infrastructure" data-subsection="SPHealthAnalyzer">$(Get-IconSVG -IconName 'hospital') Health Analyzer</a>
+                            <a href="#" data-section="infrastructure" data-subsection="SPHealthAnalyzer">$iconHospital Health Analyzer</a>
                         </div>
                     </div>
                 </div>                <div class="nav-item has-submenu">
-                    <a href="#" data-section="patch-mgmt">$(Get-IconSVG -IconName 'refresh') Patch Management <span class="section-count">2</span></a>
+                    <a href="#" data-section="patch-mgmt">$iconRefresh Patch Management <span class="section-count">2</span></a>
                     <div class="nav-submenu">                        <div class="nav-submenu-item">
-                            <a href="#" data-section="patch-mgmt" data-subsection="FarmVersion">$(Get-IconSVG -IconName 'building') Farm Version</a>
+                            <a href="#" data-section="patch-mgmt" data-subsection="FarmVersion">$iconBuilding Farm Version</a>
                         </div>
                         <div class="nav-submenu-item">
-                            <a href="#" data-section="patch-mgmt" data-subsection="MissingUpdates">$(Get-IconSVG -IconName 'refresh') Missing Windows Updates</a>
+                            <a href="#" data-section="patch-mgmt" data-subsection="MissingUpdates">$iconRefresh Missing Windows Updates</a>
                         </div>
                     </div>
                 </div>
@@ -1779,7 +1781,7 @@ $fullHtml = @"
         <main class="main-content">
             <!-- Executive Summary Section -->
             <div id="summary" class="section">                <div class="summary-card">
-                    <h2 style="color: white; margin-bottom: 20px;">$(Get-IconSVG -IconName 'chart') SharePoint Environment Summary</h2>
+                    <h2 style="color: white; margin-bottom: 20px;">$iconChart SharePoint Environment Summary</h2>
                     <div class="summary-grid">                        <div class="summary-item">
                             <span class="summary-number">31</span>
                             <span class="summary-label">Assessment Categories</span>
@@ -1795,19 +1797,19 @@ $fullHtml = @"
                     </div>
                 </div>
                   <div class="section-header">
-                    <h2>$(Get-IconSVG -IconName 'clipboard') Assessment Overview</h2>
+                    <h2>$iconClipboard Assessment Overview</h2>
                 </div>
                 <div class="section-content">
                     <p>This comprehensive SharePoint assessment report provides detailed analysis across 9 major categories covering 32 different assessment areas. The report includes both technical configuration details and security posture analysis.</p>
                     <br>
-                    <h3>$(Get-IconSVG -IconName 'folder2') Report Components:</h3>
+                    <h3>$iconFolder2 Report Components:</h3>
                     <ul style="margin-left: 20px; margin-top: 10px;">
                         <li><strong>Interactive HTML Report:</strong> This comprehensive report with collapsible navigation</li>
                         <li><strong>CSV Data Files:</strong> 33 detailed CSV files for data analysis and integration</li>
                         <li><strong>Assessment Categories:</strong> Covering Farm, Web Apps, Security, Performance, and more</li>
                     </ul>
                     <br>
-                    <h3>$(Get-IconSVG -IconName 'target') Key Areas Assessed:</h3>
+                    <h3>$iconTarget Key Areas Assessed:</h3>
                     <ul style="margin-left: 20px; margin-top: 10px;">
                         <li>SharePoint Farm configuration and topology</li>
                         <li>Web applications and site collections</li>
@@ -1821,12 +1823,12 @@ $fullHtml = @"
             </div>
               <!-- SharePoint Farm Information Section -->            <div id="farm-info" class="section">
                 <div class="section-header">
-                    <h2>$(Get-IconSVG -IconName 'building') SharePoint Farm Information</h2>
+                    <h2>$iconBuilding SharePoint Farm Information</h2>
                 </div>
                 <div class="section-content">
                     <div id="SPServers" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'computer') SharePoint Servers</h3>
+                            <h3>$iconComputer SharePoint Servers</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPServers'])
@@ -1834,7 +1836,7 @@ $fullHtml = @"
                     </div>
                       <div id="CentralAdmin" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'gear') Central Administration</h3>
+                            <h3>$iconGear Central Administration</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['CentralAdmin'])
@@ -1843,7 +1845,7 @@ $fullHtml = @"
                     
                     <div id="DiagnosticConfig" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'search') Diagnostic Configuration</h3>
+                            <h3>$iconSearch Diagnostic Configuration</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['DiagnosticConfig'])
@@ -1853,12 +1855,12 @@ $fullHtml = @"
             </div>
               <!-- Web Applications & Sites Section -->            <div id="web-apps" class="section">
                 <div class="section-header">
-                    <h2>$(Get-IconSVG -IconName 'globe') Web Applications & Sites</h2>
+                    <h2>$iconGlobe Web Applications & Sites</h2>
                 </div>
                 <div class="section-content">
                     <div id="WebApplications" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'globe') Web Applications</h3>
+                            <h3>$iconGlobe Web Applications</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['WebApplications'])
@@ -1866,7 +1868,7 @@ $fullHtml = @"
                     </div>
                       <div id="SiteCollections" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'folder') Site Collections</h3>
+                            <h3>$iconFolder Site Collections</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SiteCollections'])
@@ -1875,7 +1877,7 @@ $fullHtml = @"
                     
                     <div id="SiteAdmins" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'users') Site Collection Admins</h3>
+                            <h3>$iconUsers Site Collection Admins</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SiteAdmins'])
@@ -1884,7 +1886,7 @@ $fullHtml = @"
                     
                     <div id="SiteUsers" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'user') Site Users</h3>
+                            <h3>$iconUser Site Users</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SiteUsers'])
@@ -1895,12 +1897,12 @@ $fullHtml = @"
               <!-- Databases & Content Section -->
             <div id="databases" class="section">
                 <div class="section-header">
-                    <h2>$(Get-IconSVG -IconName 'database') Databases & Content</h2>
+                    <h2>$iconDatabase Databases & Content</h2>
                 </div>
                 <div class="section-content">
                     <div id="SPDatabases" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'database') Content Databases</h3>
+                            <h3>$iconDatabase Content Databases</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPDatabases'])
@@ -1909,7 +1911,7 @@ $fullHtml = @"
                     
                     <div id="SPContentTypes" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'file') Content Types</h3>
+                            <h3>$iconFile Content Types</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPContentTypes'])
@@ -1918,7 +1920,7 @@ $fullHtml = @"
                     
                     <div id="SPBackupHistory" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'database') Backup History</h3>
+                            <h3>$iconDatabase Backup History</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPBackupHistory'])
@@ -1929,12 +1931,12 @@ $fullHtml = @"
               <!-- Security Configuration Section -->
             <div id="security" class="section">
                 <div class="section-header">
-                    <h2>$(Get-IconSVG -IconName 'lock') Security Configuration</h2>
+                    <h2>$iconLock Security Configuration</h2>
                 </div>
                 <div class="section-content">
                     <div id="SPSecurity" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'shield') Security Configuration</h3>
+                            <h3>$iconShield Security Configuration</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPSecurity'])
@@ -1943,7 +1945,7 @@ $fullHtml = @"
                     
                     <div id="SPFarmAdmins" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'crown') Farm Administrators</h3>
+                            <h3>$iconCrown Farm Administrators</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPFarmAdmins'])
@@ -1952,7 +1954,7 @@ $fullHtml = @"
                     
                     <div id="SPWebAppPolicies" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'clipboard') Web App Policies</h3>
+                            <h3>$iconClipboard Web App Policies</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPWebAppPolicies'])
@@ -1961,7 +1963,7 @@ $fullHtml = @"
                     
                     <div id="TLSSettings" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'lock') TLS Settings</h3>
+                            <h3>$iconLock TLS Settings</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['TLSSettings'])
@@ -1971,11 +1973,11 @@ $fullHtml = @"
             </div>              <!-- Services & Solutions Section -->
             <div id="services" class="section">
                 <div class="section-header">
-                    <h2>$(Get-IconSVG -IconName 'gear') Services & Solutions</h2>
+                    <h2>$iconGear Services & Solutions</h2>
                 </div>                <div class="section-content">
                     <div id="SPServiceAccounts" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'user') Service Accounts</h3>
+                            <h3>$iconUser Service Accounts</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['SPServiceAccounts'])
@@ -1984,7 +1986,7 @@ $fullHtml = @"
                     
                     <div id="ServerServices" class="subsection">
                         <div class="subsection-header">
-                            <h3>$(Get-IconSVG -IconName 'gear') Server Services</h3>
+                            <h3>$iconGear Server Services</h3>
                         </div>
                         <div class="subsection-content">
                             $($sharePointInfo['ServerServices'])
